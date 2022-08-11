@@ -1,0 +1,29 @@
+(function (modules) {
+  function require(id) {
+    const [fn, mapping] = modules[id]
+
+    const module = {
+      exports: {},
+    };
+
+    // 避免文件名称重复,使用id装饰器
+    function localRequire(filePath) {
+      const id = mapping[filePath]
+      return require(id);
+    }
+
+    fn(localRequire, module, module.exports)
+
+    return module.exports;
+  }
+
+  require(0);
+
+})({
+  <% data.forEach((info) => { %>
+
+  '<%- info['id'] %>': [function (require, module, exports) {
+    <%- info['code'] %>
+}, <%- JSON.stringify(info['mapping']) %>],
+  <% }); %>
+})
